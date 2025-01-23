@@ -1,4 +1,4 @@
-# ![ZeroEntropy Logo](images/zeroentropy_logo.png) Cookbook
+# ![ZeroEntropy Logo](images/zeroentropy_logo.png) ZeroEntropy Cookbook
 
 Welcome to the **ZeroEntropy Cookbook**, a collection of practical guides to help you effectively use the [ZeroEntropy API](https://dashboard.zeroentropy.dev) for AI-powered retrieval. This cookbook provides step-by-step tutorials to simplify your workflow.
 As of now, the guides in this cookbook are written in Python, but the same concepts can be applied to any language.
@@ -23,13 +23,13 @@ cd zeroentropy-cookbook
 
 ---
 
-🤝 Contributing
+## 🤝 Contributing
 
 We welcome contributions! If you have a useful guide to share, feel free to submit a pull request. Please follow the existing format to maintain consistency.
 
 ---
 
-📧 Support
+## 📧 Support
 
 If you have any questions or need assistance, please reach out to founders@zeroentropy.dev or visit our official documentation.
 
