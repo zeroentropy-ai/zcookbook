@@ -7,6 +7,8 @@ As of now, the guides in this cookbook are written in Python, but the same conce
 
 1. **[Indexing and Searching PDFs](guides/search_over_many_pdfs.ipynb)**  
    Learn how to efficiently index and query PDF documents using ZeroEntropy.
+2. **[Semantic Search Over Markdown](guides/semantic_search_over_markdown/semantic_search_over_markdown.ipynb)**
+   Learn how to use ZeroEntropy to index and semantically search Markdown-based documentation using natural language queries.
 
 *(More guides coming soon...)*
 
