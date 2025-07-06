@@ -5,12 +5,15 @@ import pandas as pd
 import aiohttp
 import requests
 from datasets import load_dataset
+from dotenv import load_dotenv
 
 from zeroentropy import ZeroEntropy
 
+load_dotenv()
+
 zclient = ZeroEntropy(api_key=os.environ["ZEROENTROPY_API_KEY"])
 
-def load_dataset(dataset_name: str):
+def load_dataset_from_hf(dataset_name: str):
     ds = load_dataset(dataset_name, split="test")
     df = ds.to_pandas()
     
@@ -107,7 +110,7 @@ async def main():
     Main function to search for top documents and rerank them
     """
     await create_collection("stackoverflow")
-    doc_list = load_dataset("mteb/stackoverflowdupquestions-reranking")
+    doc_list = load_dataset_from_hf("mteb/stackoverflowdupquestions-reranking")
     await add_documents("stackoverflow", doc_list)
 
     query = "environment variable"
