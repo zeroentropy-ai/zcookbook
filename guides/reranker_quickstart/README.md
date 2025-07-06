@@ -28,10 +28,10 @@ uv run python stackoverflow_example.py
 ## What it does
 
 The script will:
-1. Load the StackOverflow duplicate questions dataset from HuggingFace
-2. Create a collection called "stackoverflow" in ZeroEntropy
+1. Load the dataset from HuggingFace. Some useful datasets are: "CoIR-Retrieval/cosqa", "mteb/stackoverflowdupquestions-reranking", etc. For the quickstart, we'll use "CoIR-Retrieval/cosqa".
+2. Create a collection called "cosqa" in ZeroEntropy
 3. Add documents from the dataset to the collection
-4. Search for documents related to "environment variable"
+4. Search for documents related to the query: Example: "Find absolute path in the file system"
 5. Fetch the full content of the top search results
 6. Rerank the documents using ZeroEntropy's reranking API
 7. Display the top 10 reranked results with:
