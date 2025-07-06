@@ -11,8 +11,8 @@ load_dotenv()
 
 zclient = ZeroEntropy(api_key=os.environ["ZEROENTROPY_API_KEY"])
 
-def load_dataset_from_hf(dataset_name: str):
-    ds = load_dataset(dataset_name, split="test")
+def load_dataset_from_hf(dataset_name: str, split: str):
+    ds = load_dataset(dataset_name, split=split)
     df = ds.to_pandas()
     
     # Convert all entries to list of dictionaries
@@ -103,14 +103,15 @@ async def main():
     Main function to search for top documents and rerank them
     """
     query = "Find absolute path in the file system"
-    collection_name = "stackoverflow"
+    collection_name = "cosqa"
+    split = "test"
     
     # Create collection and add documents or you can use existing collection
     await create_collection(collection_name)
-    doc_list = load_dataset_from_hf("mteb/stackoverflowdupquestions-reranking")
+    doc_list = load_dataset_from_hf("CoIR-Retrieval/cosqa", split=split)
     await add_documents(collection_name, doc_list)
 
-    top_docs = await top_documents(query, "cosqa")
+    top_docs = await top_documents(query, collection_name)
     
     # Create document objects with both content and metadata
     documents = []
