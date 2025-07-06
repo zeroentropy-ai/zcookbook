@@ -79,7 +79,7 @@ async def top_documents(query: str, collection_name: str = "default", k: int = 5
     )
     return response.results
 
-async def reranking(query: str, documents: list) -> None:
+async def reranking(query: str, documents: list) -> dict:
     """
     Rerank documents using top documents from the API
     """
@@ -101,24 +101,7 @@ async def reranking(query: str, documents: list) -> None:
         json=payload,
     ) as raw_response:
         response = await raw_response.json()
-        
-        # Print the reranked results
-        if "results" in response:
-            print("\n=== Top reranked documents ===")
-            for i, result in enumerate(response["results"][:10]):  # Show top 10
-                index = result["index"]
-                score = result["relevance_score"]
-                original_doc = documents[index] if index < len(documents) else {}
-                original_score = original_doc.get("score", "N/A")
-                
-                # Print a snippet of the document content
-                content_snippet = original_doc.get("content", "")[:200] + "..." if len(original_doc.get("content", "")) > 200 else original_doc.get("content", "")
-                
-                print(f"{i+1}. (Rerank Score: {score:.4f}, Original Score: {original_score})")
-                print(f"   Content: {content_snippet}")
-                print()
-        else:
-            print("\nNo results found in reranking response")
+        return response
 
 async def main():
     """
@@ -140,7 +123,25 @@ async def main():
             "score": getattr(doc, 'score', 'N/A')  # Use getattr in case score doesn't exist
         })
 
-    await reranking("environment variable", documents)
+    response = await reranking("environment variable", documents)
+    
+    # Print the reranked results
+    if "results" in response:
+        print("\n=== Top reranked documents ===")
+        for i, result in enumerate(response["results"][:10]):  # Show top 10
+            index = result["index"]
+            score = result["relevance_score"]
+            original_doc = documents[index] if index < len(documents) else {}
+            original_score = original_doc.get("score", "N/A")
+            
+            # Print a snippet of the document content
+            content_snippet = original_doc.get("content", "")[:200] + "..." if len(original_doc.get("content", "")) > 200 else original_doc.get("content", "")
+            
+            print(f"{i+1}. (Rerank Score: {score:.4f}, Original Score: {original_score})")
+            print(f"   Content: {content_snippet}")
+            print()
+    else:
+        print("\nNo results found in reranking response")
 
 
 if __name__ == "__main__":
