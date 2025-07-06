@@ -1,0 +1,13 @@
+[project]
+name = "zcookbook"
+version = "0.1.0"
+description = "Reranking example for ZeroEntropy"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.12.13",
+    "datasets>=3.6.0",
+    "dotenv>=0.9.9",
+    "pandas>=2.0.0",
+    "zeroentropy>=0.1.0a5",
+]
