@@ -10,7 +10,7 @@ from zeroentropy import ZeroEntropy
 
 zclient = ZeroEntropy(api_key=os.environ["ZEROENTROPY_API_KEY"])
 
-def documents(dataset_name: str):
+def load_dataset(dataset_name: str):
     ds = load_dataset(dataset_name, split="test")
     df = ds.to_pandas()
     
@@ -79,16 +79,15 @@ async def top_documents(query: str, collection_name: str = "default", k: int = 5
     )
     return response.results
 
-async def reranking(query: str, documents: list) -> dict:
+async def rerank_documents(query: str, documents: list) -> dict:
     """
     Rerank documents using top documents from the API
     """
+    documents_as_strings = [doc["content"] for doc in documents]
+    
     headers = {
         "Authorization": f"Bearer {os.environ['ZEROENTROPY_API_KEY']}",
     }
-    
-    # Extract just the content strings for the API call
-    documents_as_strings = [doc["content"] for doc in documents]
     
     payload = {
         "query": query,
@@ -105,13 +104,14 @@ async def reranking(query: str, documents: list) -> dict:
 
 async def main():
     """
-    Main function to run the top documents and reranking example
+    Main function to search for top documents and rerank them
     """
-    # await create_collection("stackoverflow")
-    # doc_list = documents("mteb/stackoverflowdupquestions-reranking")
-    # await add_documents("stackoverflow", doc_list[49:])
+    await create_collection("stackoverflow")
+    doc_list = load_dataset("mteb/stackoverflowdupquestions-reranking")
+    await add_documents("stackoverflow", doc_list)
 
-    top_docs = await top_documents("environment variable", "stackoverflow")
+    query = "environment variable"
+    top_docs = await top_documents(query, "stackoverflow")
     
     # Create document objects with both content and metadata
     documents = []
@@ -123,7 +123,7 @@ async def main():
             "score": getattr(doc, 'score', 'N/A')  # Use getattr in case score doesn't exist
         })
 
-    response = await reranking("environment variable", documents)
+    response = await rerank_documents(query, documents)
     
     # Print the reranked results
     if "results" in response:
@@ -137,8 +137,8 @@ async def main():
             # Print a snippet of the document content
             content_snippet = original_doc.get("content", "")[:200] + "..." if len(original_doc.get("content", "")) > 200 else original_doc.get("content", "")
             
-            print(f"{i+1}. (Rerank Score: {score:.4f}, Original Score: {original_score})")
-            print(f"   Content: {content_snippet}")
+            print(f"{i+1}. Rerank Score: {score:.4f}, Original Score: {original_score}")
+            print(f"   Content: {content_snippet} \n")
             print()
     else:
         print("\nNo results found in reranking response")
