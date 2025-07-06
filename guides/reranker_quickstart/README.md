@@ -51,6 +51,39 @@ The script will:
 
 The script outputs reranked search results showing how the reranking model improves the relevance ordering compared to the original search scores.
 
+Sample output:
+```
+query = "Find absolute path in the file system"
+========================================================================================================================
+RERANKING RESULTS COMPARISON
+========================================================================================================================
+Rerank   Original   Content Preview                                                       
+------------------------------------------------------------------------------------------------------------------------
+1        8          def get_absolute_path(*args):
+                        """Transform relative pathnames i...
+2        9          def get_absolute_path(*args):
+                        """Transform relative pathnames i...
+3        10         def get_absolute_path(*args):
+                        """Transform relative pathnames i...
+4        11         def get_absolute_path(*args):
+                        """Transform relative pathnames i...
+5        12         def __absolute__(self, uri):
+                        """ Get the absolute uri for a...
+6        14         def __absolute__(self, uri):
+                        """ Get the absolute uri for a...
+7        15         def __absolute__(self, uri):
+                        """ Get the absolute uri for a...
+8        47         def normalize_path(path):
+                        """
+                        Convert a path to its canonic...
+9        50         def normalize_path(path):
+                        """
+                        Convert a path to its canonic...
+10       23         def data_directory():
+                        """Return the absolute path to the direct...
+------------------------------------------------------------------------------------------------------------------------
+```
+
 ## Configuration
 
 You can modify the search query and collection name in the `main()` function to experiment with different searches and datasets.

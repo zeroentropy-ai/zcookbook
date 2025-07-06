@@ -1,9 +1,7 @@
 import asyncio
-import json
 import os
 import pandas as pd
 import aiohttp
-import requests
 from datasets import load_dataset
 from dotenv import load_dotenv
 
@@ -17,14 +15,9 @@ def load_dataset_from_hf(dataset_name: str):
     ds = load_dataset(dataset_name, split="test")
     df = ds.to_pandas()
     
-    print(f"Dataset has {len(df)} rows")
-    print(f"Columns: {list(df.columns)}")
-    
     # Convert all entries to list of dictionaries
     text_entries = df.to_dict('records')
     
-    print(f"\nReturning {len(text_entries)} text entries")
-    print(text_entries[0])
     return text_entries
 
 async def fetch_document_content(file_url: str) -> str:
@@ -57,7 +50,7 @@ async def add_documents(collection_name: str, documents: list):
     """
     Add documents to a collection in ZeroEntropy API
     """
-    for i, doc in enumerate(documents, start=1050):
+    for i, doc in enumerate(documents, start=1000):
         try:
             print(f"Adding document {i}")
             zclient.documents.add(
@@ -109,40 +102,47 @@ async def main():
     """
     Main function to search for top documents and rerank them
     """
-    await create_collection("stackoverflow")
+    query = "Find absolute path in the file system"
+    collection_name = "stackoverflow"
+    
+    # Create collection and add documents or you can use existing collection
+    await create_collection(collection_name)
     doc_list = load_dataset_from_hf("mteb/stackoverflowdupquestions-reranking")
-    await add_documents("stackoverflow", doc_list)
+    await add_documents(collection_name, doc_list)
 
-    query = "environment variable"
-    top_docs = await top_documents(query, "stackoverflow")
+    top_docs = await top_documents(query, "cosqa")
     
     # Create document objects with both content and metadata
     documents = []
-    for doc in top_docs:
+    for i, doc in enumerate(top_docs):
         content = await fetch_document_content(doc.file_url)
         documents.append({
             "content": content,
             "path": doc.file_url,
-            "score": getattr(doc, 'score', 'N/A')  # Use getattr in case score doesn't exist
+            "score": getattr(doc, 'score', 'N/A'),
+            "original_rank": i + 1  # Track original ranking (1-indexed)
         })
 
     response = await rerank_documents(query, documents)
     
-    # Print the reranked results
+    # Print the reranked results in table format
     if "results" in response:
-        print("\n=== Top reranked documents ===")
+        print("\n" + "="*120)
+        print("RERANKING RESULTS COMPARISON")
+        print("="*120)
+        print(f"{'Rerank':<8} {'Original':<10} {'Content Preview':<70}")
+        print("-"*120)
+        
         for i, result in enumerate(response["results"][:10]):  # Show top 10
             index = result["index"]
-            score = result["relevance_score"]
             original_doc = documents[index] if index < len(documents) else {}
-            original_score = original_doc.get("score", "N/A")
+            original_rank = original_doc.get("original_rank", "N/A")
             
-            # Print a snippet of the document content
-            content_snippet = original_doc.get("content", "")[:200] + "..." if len(original_doc.get("content", "")) > 200 else original_doc.get("content", "")
-            
-            print(f"{i+1}. Rerank Score: {score:.4f}, Original Score: {original_score}")
-            print(f"   Content: {content_snippet} \n")
-            print()
+            # Get content snippet (first 70 characters)
+            content_snippet = original_doc.get("content", "")[:67] + "..." if len(original_doc.get("content", "")) > 67 else original_doc.get("content", "")
+
+            print(f"{i+1:<8} {original_rank:<10} {content_snippet:<70}")
+        
     else:
         print("\nNo results found in reranking response")
 
