@@ -949,12 +949,12 @@ requires-dist = [
     { name = "datasets", specifier = ">=3.6.0" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "pandas", specifier = ">=2.0.0" },
-    { name = "zeroentropy", specifier = ">=0.1.0a5" },
+    { name = "zeroentropy", specifier = ">=0.1.0a6" },
 ]
 
 [[package]]
 name = "zeroentropy"
-version = "0.1.0a5"
+version = "0.1.0a6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -964,7 +964,7 @@ dependencies = [
     { name = "sniffio" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c6/c8/ef95768f3d0d41e3c6b1e65f4a201ee7af44f968b21b8807f6b601163a5a/zeroentropy-0.1.0a5.tar.gz", hash = "sha256:bafae35a7b581fcdf5d9f56cffbe48045420e0c11f3d145ceaa0e45e2dabd87c", size = 107753, upload-time = "2025-06-04T01:31:50.505Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/08/14/05c8caaa25ae64008c2f5b021cefd30276f00845d99bab4763be300da93a/zeroentropy-0.1.0a6.tar.gz", hash = "sha256:04f38e7b40f39cfdd4bb16df0ab0b18d8f33d516c1e9a39e0494a5fb7fba358d", size = 112726, upload-time = "2025-07-08T01:51:42.796Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5c/ff/0483004b6a210bee82ae1e34b2faa8f6425f06edcf272b8e130a4d8d83b0/zeroentropy-0.1.0a5-py3-none-any.whl", hash = "sha256:6e072d09f1f3e0bca096e6807f7ae1ee9aaaff5916143a72f909557651bcabfa", size = 102714, upload-time = "2025-06-04T01:31:49.301Z" },
+    { url = "https://files.pythonhosted.org/packages/3b/7e/594e9ec5cda6d8f4dc249c5ca0c6b31b19886eafedcea6c41a2400a2a7b9/zeroentropy-0.1.0a6-py3-none-any.whl", hash = "sha256:0caa6c4a450af80892d42848036eea0b766e3fe0bf6a097a613ab9403fdf5ad6", size = 101501, upload-time = "2025-07-08T01:51:41.527Z" },
 ]

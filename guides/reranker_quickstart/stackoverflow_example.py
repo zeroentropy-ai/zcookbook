@@ -4,7 +4,6 @@ import pandas as pd
 import aiohttp
 from datasets import load_dataset
 from dotenv import load_dotenv
-
 from zeroentropy import ZeroEntropy
 
 load_dotenv()
@@ -80,23 +79,12 @@ async def rerank_documents(query: str, documents: list) -> dict:
     Rerank documents using top documents from the API
     """
     documents_as_strings = [doc["content"] for doc in documents]
-    
-    headers = {
-        "Authorization": f"Bearer {os.environ['ZEROENTROPY_API_KEY']}",
-    }
-    
-    payload = {
-        "query": query,
-        "documents": documents_as_strings,
-    }
 
-    async with aiohttp.ClientSession() as client, client.post(
-        "https://api.zeroentropy.dev/v1/models/rerank",
-        headers=headers,
-        json=payload,
-    ) as raw_response:
-        response = await raw_response.json()
-        return response
+    response = zclient.models.rerank(
+        query=query,
+        documents=documents_as_strings,
+    )
+    return response.results
 
 async def main():
     """
@@ -126,16 +114,15 @@ async def main():
 
     response = await rerank_documents(query, documents)
     
-    # Print the reranked results in table format
-    if "results" in response:
+    if response:
         print("\n" + "="*120)
         print("RERANKING RESULTS COMPARISON")
         print("="*120)
         print(f"{'Rerank':<8} {'Original':<10} {'Content Preview':<70}")
         print("-"*120)
         
-        for i, result in enumerate(response["results"][:10]):  # Show top 10
-            index = result["index"]
+        for i, result in enumerate(response[:10]):  # Show top 10
+            index = result.index
             original_doc = documents[index] if index < len(documents) else {}
             original_rank = original_doc.get("original_rank", "N/A")
             
