@@ -11,6 +11,10 @@ As of now, the guides in this cookbook are written in Python, but the same conce
    Learn how to use ZeroEntropy to index and semantically search Markdown-based documentation using natural language queries.
 3. **[Python Scripts to Index and Query with ZE](guides/index_and_query_quickstart)**
    Learn how to use ZeroEntropy to index and query over your own collection of PDFs, CSVs, TXT files, etc.
+4. **[Using ZeroEntropy's Reranker](guides/reranker_quickstart)**
+   Learn how to use ZeroEntropy's models to rerank the result of an initial vector search or hybrid search. 
+5. **[Deep Research with ZeroEntropy's MCP](guides/openai_deepresearch)**
+   Learn how to use ZeroEntropy's MCP server to build a deep research agent across an organization's documents. 
 
 *(More guides coming soon...)*
 
