@@ -1,0 +1,17 @@
+[project]
+name = "search-tool-for-voice-agents"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "openai-agents",
+    "pynput",
+    "numpy",
+    "openai",
+    "python-dotenv",
+    "requests",
+    "sounddevice",
+    "zeroentropy",
+    "websockets>=15.0.1",
+]
