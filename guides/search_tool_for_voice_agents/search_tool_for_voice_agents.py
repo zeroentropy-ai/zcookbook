@@ -143,22 +143,6 @@ def record_enter_to_talk():
     return None
 
 
-def transcribe_audio(audio_array):
-    """Transcribe audio to text."""
-    audio_bytes = audio_array.tobytes()
-    audio_file = io.BytesIO(audio_bytes)
-    audio_file.name = "user_input.wav"
-    
-    transcript = openai_client.audio.transcriptions.create(
-        model="gpt-4o-transcribe",
-        file=audio_file,
-        response_format="text"
-    )
-    
-    print(f"You said: {transcript.text}")
-    return transcript.text
-
-
 async def run_voice_assistant():
     """Main voice assistant loop."""
     print("\n🎙️ Voice Assistant")
@@ -284,7 +268,7 @@ async def main():
         return
     
     # Run assistant
-    # await run_voice_assistant()
+    await run_voice_assistant()
 
 
 if __name__ == "__main__":
