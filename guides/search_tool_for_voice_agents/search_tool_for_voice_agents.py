@@ -64,6 +64,7 @@ def setup_yc_data():
         print(f"Created collection: {COLLECTION_NAME}")
     except Exception:
         print(f"Collection {COLLECTION_NAME} already exists")
+        return True
     
     # Fetch companies
     try:
@@ -75,7 +76,7 @@ def setup_yc_data():
         print(f"Failed to fetch companies: {e}")
         return False
     
-    # Add companies to collection
+    # Add companies to collection - takes ~15 mins
     success_count = 0
     for company in companies:
         try:
@@ -100,7 +101,8 @@ def setup_yc_data():
                 metadata=metadata
             )
             success_count += 1
-        except Exception:
+        except Exception as e:
+            print(f"Failed to add company {company.get('slug', '')} - {e}")
             continue
     
     print(f"Added {success_count} companies to collection")
@@ -198,7 +200,7 @@ async def run_voice_assistant():
         output_stream = sd.OutputStream(
             samplerate=SAMPLE_RATE,
             channels=CHANNELS,
-            dtype="int16"
+            dtype="int16",
         )
         output_stream.start()
         
@@ -249,11 +251,11 @@ async def run_voice_assistant():
                 try:
                     async for event in result.stream():
                         if stop_playback.is_set():
-                            print("\n[Interrupted]")
+                            print("\n⏹️ [Interrupted]")
                             break
                         if event.type == "voice_stream_event_audio":
                             output_stream.write(event.data)
-                        elif event.type == "voice_stream_event_transcript":
+                        elif event.type == "voice_stream_event_lifecycle":
                             print(event.text, end="", flush=True)
                 except Exception:
                     pass
@@ -282,7 +284,7 @@ async def main():
         return
     
     # Run assistant
-    await run_voice_assistant()
+    # await run_voice_assistant()
 
 
 if __name__ == "__main__":
