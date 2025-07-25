@@ -44,7 +44,7 @@ def top_documents(query: str, k: int = 3) -> str:
 @function_tool
 def rerank_documents(query: str, documents: list[str], model: str = "zerank-1", top_n: int = 3) -> str:
     """
-    Retrieve top documents from the ZeroEntropy collection using a query.
+    Reranks the provided documents, according to the provided query.
 
     Args:
         query: The search string to run against the collection.

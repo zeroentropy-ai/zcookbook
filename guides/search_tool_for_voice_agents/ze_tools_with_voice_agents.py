@@ -12,7 +12,6 @@ import numpy as np
 from openai import OpenAI
 from zeroentropy import ZeroEntropy
 from agents import Agent
-from agents.mcp import MCPServerSse
 from agents.voice import (
     AudioInput,
     SingleAgentVoiceWorkflow,
@@ -20,6 +19,7 @@ from agents.voice import (
     VoicePipelineConfig,
     TTSModelSettings,
 )
+from ze_tools import top_documents, rerank_documents
 
 # Load environment variables
 dotenv.load_dotenv()
@@ -51,8 +51,6 @@ TTS_PROMPT = (
 
 # Initialize clients
 ze_client = ZeroEntropy(api_key=ZEROENTROPY_API_KEY)
-openai_client = OpenAI(api_key=OPENAI_API_KEY)
-
 
 def setup_yc_data():
     """Fetch YC companies and add to ZeroEntropy collection."""
@@ -143,6 +141,7 @@ def record_enter_to_talk():
     return None
 
 
+
 async def run_voice_assistant():
     """Main voice assistant loop."""
     print("\n🎙️ Voice Assistant")
@@ -153,108 +152,96 @@ async def run_voice_assistant():
     print("   • Press Ctrl+C to exit")
     print("-" * 50)
     
-    # Setup MCP connection
-    async with MCPServerSse(
-        name="ZeroEntropy",
-        params={
-            "url": MCP_URL,
-            "headers": {
-                "Authorization": f"Bearer {ZEROENTROPY_API_KEY}",
-                "X-Collection-Name": COLLECTION_NAME,
-            }
-        },
-        client_session_timeout_seconds=10.0,
-    ) as search_server:
-        
-        # Create agent
-        agent = Agent(
-            name="ZeroEntropyVoiceAgent",
-            instructions=SYSTEM_PROMPT,
-            mcp_servers=[search_server],
-            model="gpt-4.1-mini",
-        )
-        
-        # Setup voice pipeline
-        tts_settings = TTSModelSettings(instructions=TTS_PROMPT)
-        voice_config = VoicePipelineConfig(tts_settings=tts_settings)
-        workflow = SingleAgentVoiceWorkflow(agent)
-        pipeline = VoicePipeline(workflow=workflow, config=voice_config)
-        
-        # Setup audio output
-        output_stream = sd.OutputStream(
-            samplerate=SAMPLE_RATE,
-            channels=CHANNELS,
-            dtype="int16",
-        )
-        output_stream.start()
-        
-        try:
-            while True:
-                # Record user input
-                audio_array = record_enter_to_talk()
-                if audio_array is None:
-                    continue
-                
-                # Process request
-                user_input = AudioInput(buffer=audio_array)
-                result = await pipeline.run(user_input)
-                
-                # Setup interruption detection
-                stop_playback = threading.Event()
-                interrupt_thread = None
-                
-                def monitor_interrupt():
-                    """Monitor for Enter key press to interrupt response."""
-                    try:
-                        # Set a very short timeout for input() to make it non-blocking-ish
-                        # We'll use a simple approach: try to read input with a timeout
-                        import select
-                        import sys
-                        
-                        while not stop_playback.is_set():
-                            # Check if input is available (Unix/macOS only)
-                            if hasattr(select, 'select'):
-                                ready, _, _ = select.select([sys.stdin], [], [], 0.1)
-                                if ready:
-                                    # Consume the input line
-                                    sys.stdin.readline()
-                                    stop_playback.set()
-                                    return
-                            else:
-                                # Fallback for Windows - less responsive
-                                time.sleep(0.1)
-                    except:
-                        pass
-                
-                # Start interrupt monitoring thread
-                interrupt_thread = threading.Thread(target=monitor_interrupt, daemon=True)
-                interrupt_thread.start()
-                
-                # Stream response
-                print("🤖 Assistant: ", end="", flush=True)
-                try:
-                    async for event in result.stream():
-                        if stop_playback.is_set():
-                            print("\n⏹️ [Interrupted]")
-                            break
-                        if event.type == "voice_stream_event_audio":
-                            output_stream.write(event.data)
-                        elif event.type == "voice_stream_event_lifecycle":
-                            print(event.text, end="", flush=True)
-                except Exception:
-                    pass
-                
-                # Signal the interrupt thread to stop
-                stop_playback.set()
-                
-                print("\n" + "-" * 30)
-                
-        except KeyboardInterrupt:
-            print("\n👋 Goodbye!")
-        finally:
-            output_stream.stop()
-            output_stream.close()
 
+        
+    # Create agent
+    agent = Agent(
+        name="ZeroEntropyVoiceAgent",
+        instructions=SYSTEM_PROMPT,
+        tools=[top_documents, rerank_documents],
+        model="gpt-4.1-mini",
+    )
+    
+    # Setup voice pipeline
+    tts_settings = TTSModelSettings(instructions=TTS_PROMPT)
+    voice_config = VoicePipelineConfig(tts_settings=tts_settings)
+    workflow = SingleAgentVoiceWorkflow(agent)
+    pipeline = VoicePipeline(workflow=workflow, config=voice_config)
+    
+    # Setup audio output
+    output_stream = sd.OutputStream(
+        samplerate=SAMPLE_RATE,
+        channels=CHANNELS,
+        dtype="int16"
+    )
+    output_stream.start()
+    
+    try:
+        while True:
+            # Record user input
+            audio_array = record_enter_to_talk()
+            if audio_array is None:
+                continue
+            
+            # Process request
+            user_input = AudioInput(buffer=audio_array)
+            result = await pipeline.run(user_input)
+            
+            # Setup interruption detection
+            stop_playback = threading.Event()
+            interrupt_thread = None
+            
+            def monitor_interrupt():
+                """Monitor for Enter key press to interrupt response."""
+                try:
+                    # Set a very short timeout for input() to make it non-blocking-ish
+                    # We'll use a simple approach: try to read input with a timeout
+                    import select
+                    import sys
+                    
+                    while not stop_playback.is_set():
+                        # Check if input is available (Unix/macOS only)
+                        if hasattr(select, 'select'):
+                            ready, _, _ = select.select([sys.stdin], [], [], 0.1)
+                            if ready:
+                                # Consume the input line
+                                sys.stdin.readline()
+                                stop_playback.set()
+                                return
+                        else:
+                            # Fallback for Windows - less responsive
+                            time.sleep(0.1)
+                except:
+                    pass
+            
+            # Start interrupt monitoring thread
+            interrupt_thread = threading.Thread(target=monitor_interrupt, daemon=True)
+            interrupt_thread.start()
+            
+            # Stream response
+            print("🤖 Assistant: ", end="", flush=True)
+            try:
+                async for event in result.stream():
+                    if stop_playback.is_set():
+                        print("\n[Interrupted]")
+                        break
+                    if event.type == "voice_stream_event_audio":
+                        output_stream.write(event.data)
+                    elif event.type == "voice_stream_event_transcript":
+                        print(event.text, end="", flush=True)
+            except Exception:
+                pass
+            
+            # Signal the interrupt thread to stop
+            stop_playback.set()
+            
+            print("\n" + "-" * 30)
+            
+    except KeyboardInterrupt:
+        print("\n👋 Goodbye!")
+    finally:
+        output_stream.stop()
+        output_stream.close()
 
 async def main():
     """Main entry point."""
