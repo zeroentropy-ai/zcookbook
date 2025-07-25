@@ -2,15 +2,12 @@ import os
 import asyncio
 import threading
 import time
-import io
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
+from concurrent.futures import ThreadPoolExecutor
 
 import dotenv
 import requests
 import sounddevice as sd
 import numpy as np
-from openai import OpenAI
 from zeroentropy import ZeroEntropy
 from agents import Agent
 from agents.voice import (
@@ -91,7 +88,7 @@ def setup_yc_data():
         print(f"Created collection: {COLLECTION_NAME}")
     except Exception:
         print(f"Collection {COLLECTION_NAME} already exists")
-        # return True
+        return True
     
     # Fetch companies
     try:
