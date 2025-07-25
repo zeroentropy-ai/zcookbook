@@ -1,0 +1,11 @@
+[project]
+name = "ze-search-tool-for-agents"
+version = "0.1.0"
+description = "ZeroEntropy as a search tool for agents"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.97.1",
+    "openai-agents>=0.2.3",
+    "zeroentropy>=0.1.0a6",
+]
