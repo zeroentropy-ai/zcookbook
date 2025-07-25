@@ -3,6 +3,7 @@ import asyncio
 import threading
 import time
 import io
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 import dotenv
@@ -52,6 +53,34 @@ TTS_PROMPT = (
 # Initialize clients
 ze_client = ZeroEntropy(api_key=ZEROENTROPY_API_KEY)
 
+def add_single_company(company):
+    """Helper function to add a single company to the collection."""
+    try:
+        slug = str(company.get('slug', ''))
+        text = (
+            f"{company.get('name', '')} — {company.get('one_liner', '')}\n\n"
+            f"{company.get('long_description', '')}\n\n"
+            f"{company.get('website', '')}\n\n"
+            f"{company.get('subindustry', '')}\n\n"
+            f"Stage: {company.get('stage', '')}"
+        )
+        metadata = {
+            "batch": company.get("batch", ""),
+            "list:industries": company.get("industries", []),
+            "stage": company.get("stage", ""),
+        }
+        
+        ze_client.documents.add(
+            collection_name=COLLECTION_NAME,
+            path=slug,
+            content={"type": "text", "text": text},
+            metadata=metadata
+        )
+        return True
+    except Exception as e:
+        print(f"Failed to add company {company.get('slug', '')}: {e}")
+        return False
+
 def setup_yc_data():
     """Fetch YC companies and add to ZeroEntropy collection."""
     print("Setting up YC company data...")
@@ -62,7 +91,7 @@ def setup_yc_data():
         print(f"Created collection: {COLLECTION_NAME}")
     except Exception:
         print(f"Collection {COLLECTION_NAME} already exists")
-        return True
+        # return True
     
     # Fetch companies
     try:
@@ -74,37 +103,19 @@ def setup_yc_data():
         print(f"Failed to fetch companies: {e}")
         return False
     
-    # Add companies to collection - takes ~15 mins
-    success_count = 0
-    for company in companies:
-        try:
-            slug = str(company.get('slug', ''))
-            text = (
-                f"{company.get('name', '')} — {company.get('one_liner', '')}\n\n"
-                f"{company.get('long_description', '')}\n\n"
-                f"{company.get('website', '')}\n\n"
-                f"{company.get('subindustry', '')}\n\n"
-                f"Stage: {company.get('stage', '')}"
-            )
-            metadata = {
-                "batch": company.get("batch", ""),
-                "list:industries": company.get("industries", []),
-                "stage": company.get("stage", ""),
-            }
-            
-            ze_client.documents.add(
-                collection_name=COLLECTION_NAME,
-                path=slug,
-                content={"type": "text", "text": text},
-                metadata=metadata
-            )
-            success_count += 1
-        except Exception as e:
-            print(f"Failed to add company {company.get('slug', '')} - {e}")
-            continue
+    # Add companies to collection concurrently
+    print(f"Processing companies with 10 concurrent workers...")
+    start_time = time.time()
     
-    print(f"Added {success_count} companies to collection")
-    return success_count > 0
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        # Submit all tasks and collect results
+        results = list(executor.map(add_single_company, companies))
+    
+    success_count = sum(results)
+    elapsed = time.time() - start_time
+    print(f"Completed! Added {success_count}/{len(companies)} companies successfully. Total time: {elapsed:.1f}s")
+    
+    return True
 
 
 def record_enter_to_talk():
