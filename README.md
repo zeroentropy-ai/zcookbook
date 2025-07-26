@@ -15,6 +15,10 @@ As of now, the guides in this cookbook are written in Python, but the same conce
    Learn how to use ZeroEntropy's models to rerank the result of an initial vector search or hybrid search. 
 5. **[Deep Research with ZeroEntropy's MCP](guides/openai_deepresearch)**
    Learn how to use ZeroEntropy's MCP server to build a deep research agent across an organization's documents. 
+6. **[Voice Agent with ZeroEntropy's MCP](guides/search_tool_for_voice_agents)**
+   Learn how to use ZeroEntropy's MCP server to build a Voice AI Agent with access to a knowledge base. 
+7. **[Use ZeroEntropy as the Search Tool of an Agent](guides/search_tool_for_agents)**
+   Learn how to use ZeroEntropy as an Agent's search tool to access a knowledge base when responding to user queries.   
 
 *(More guides coming soon...)*
 
