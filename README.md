@@ -19,6 +19,8 @@ As of now, the guides in this cookbook are written in Python, but the same conce
    Learn how to use ZeroEntropy's MCP server to build a Voice AI Agent with access to a knowledge base. 
 7. **[Use ZeroEntropy as the Search Tool of an Agent](guides/search_tool_for_agents)**
    Learn how to use ZeroEntropy as an Agent's search tool to access a knowledge base when responding to user queries.   
+8. **[Use LlamaParse in combination with ZeroEntropy to search and rerank PDFs](guides/rerank_llamaparsed_pdfs)**
+   Learn how to use ZeroEntropy and LlamaParse to parse, search, and rerank complex PDF documents.   
 
 *(More guides coming soon...)*
 
