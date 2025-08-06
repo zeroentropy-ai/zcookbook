@@ -254,8 +254,10 @@ class ZeroEntropyArticleSearcher:
                 print(f"Categories: {metadata.get('categories', 'N/A')}")
                 print(f"Source URL: {metadata.get('source_url', 'N/A')}")
 
+            # NOTE: file_url contains sensitive tokens - UNCOMMENT ONLY FOR DEBUGGING/TESTING
             if result.get("file_url"):
-                print(f"File URL: {result['file_url']}")
+                # print(f"File URL: {result['file_url']}")
+                print("File URL: [Available - hidden for security]")
 
             print("\n" + "-" * 50 + "\n")
 
