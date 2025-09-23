@@ -1,0 +1,38 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  gossip-search:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zeroentropy-gossip-search
+    ports:
+      - "8501:8501"
+    environment:
+      - ZEROENTROPY_API_KEY=${ZEROENTROPY_API_KEY}
+      - PYTHONPATH=/app
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Add a reverse proxy
+  nginx:
+    image: nginx:alpine
+    container_name: gossip-search-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - gossip-search
+    restart: unless-stopped

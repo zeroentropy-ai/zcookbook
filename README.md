@@ -21,6 +21,8 @@ As of now, the guides in this cookbook are written in Python, but the same conce
    Learn how to use ZeroEntropy as an Agent's search tool to access a knowledge base when responding to user queries.   
 8. **[Use LlamaParse in combination with ZeroEntropy to search and rerank PDFs](guides/rerank_llamaparsed_pdfs)**
    Learn how to use ZeroEntropy and LlamaParse to parse, search, and rerank complex PDF documents.   
+9. **[Use ZeroEntropy for Semantic Search over articles (French Gossip Media)](guides/semantic_search_over_articles)**
+   Learn how to use ZeroEntropy on a semantic search RAG to scrap, index, search, and rerank media articles.   
 
 *(More guides coming soon...)*
 
