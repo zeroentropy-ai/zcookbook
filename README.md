@@ -21,6 +21,10 @@ As of now, the guides in this cookbook are written in Python, but the same conce
    Learn how to use ZeroEntropy as an Agent's search tool to access a knowledge base when responding to user queries.   
 8. **[Use LlamaParse in combination with ZeroEntropy to search and rerank PDFs](guides/rerank_llamaparsed_pdfs)**
    Learn how to use ZeroEntropy and LlamaParse to parse, search, and rerank complex PDF documents.   
+9. **[Retrieval Quickstart with the ZeroEntropy SDK](guides/retrieval_quickstart)**
+   Learn how to use the ZeroEntropy SDK to create collections, index documents, and search with `top_documents`, `top_snippets`, and `top_pages`.
+10. **[zembed-1 Quickstart](guides/zembed_quickstart)**
+    Learn how to use `zclient.models.embed()` directly — covers asymmetric retrieval, flexible dimensions, latency modes, sentence similarity, and clustering.
 
 *(More guides coming soon...)*
 
