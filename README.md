@@ -36,7 +36,7 @@ To start using the cookbook, get your [API key](https://dashboard.zeroentropy.de
 
 ```bash
 git clone https://github.com/zeroentropy-ai/zcookbook.git
-cd zeroentropy-cookbook
+cd zcookbook
 ```
 
 ---

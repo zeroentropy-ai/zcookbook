@@ -47,7 +47,7 @@ You can modify the default query string in query.py.
 ## File Structure
 
 ```bash
-   index_and_query/
+   index_and_query_quickstart/
 * data/           place your .csv .txt or .pdf files here
 * index.py        indexes all documents in the data folder
 * query.py        queries the indexed documents
