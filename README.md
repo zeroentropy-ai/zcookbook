@@ -25,6 +25,8 @@ As of now, the guides in this cookbook are written in Python, but the same conce
    Learn how to use the ZeroEntropy SDK to create collections, index documents, and search with `top_documents`, `top_snippets`, and `top_pages`.
 10. **[zembed-1 Quickstart](guides/zembed_quickstart)**
     Learn how to use `zclient.models.embed()` directly — covers asymmetric retrieval, flexible dimensions, latency modes, sentence similarity, and clustering.
+11. **[Deploy zerank-2 on Azure AKS](guides/azure_zerank2/azure_zerank2.ipynb)**
+    Learn how to deploy `zerank-2` from Azure Marketplace to an H100-backed AKS cluster and test the local rerank endpoint.
 
 *(More guides coming soon...)*
 
