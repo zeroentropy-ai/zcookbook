@@ -14,7 +14,7 @@ The example shows a complete workflow:
 
 ## Prerequisites
 
-- Python 3.8+
+- Python 3.9+
 - ZeroEntropy API key (set as `ZEROENTROPY_API_KEY` environment variable)
 - HuggingFace CLI installed and logged in. Check [here](https://huggingface.co/settings/tokens) for token creation.
 
